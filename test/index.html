@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<meta charset="UTF-8">
+	<title>TreeWalker Test Suite</title>
+
+	<!-- Test framework -->
+	<link rel="stylesheet" href="../libs/qunit/qunit/qunit.css">
+	<script src="../libs/qunit/qunit/qunit.js"></script>
+	<script src="../libs/qunit-logging/qunit-logging.js"></script>
+	<script>
+		QUnit.config.reorder = false;
+
+		QUnit.config.urlConfig.push({
+			id: 'useNative',
+			label: 'Use native TreeWalker',
+			tooltip: 'Don\'t disable the native document.createTreeWalker (if it exists)'
+		});
+
+		QUnit.config.urlConfig.push({
+			id: 'useMin',
+			label: 'Use minified build',
+			tooltip: 'Use minified build'
+		});
+
+		if (!QUnit.urlParams.useNative) {
+			document.createTreeWalker = undefined;
+		}
+
+		if (QUnit.urlParams.useMin) {
+			src = '../dist/TreeWalker-polyfill.min.js';
+		} else {
+			src = '../src/TreeWalker-polyfill.js';
+		}
+
+		// Source code 
+		document.write( '<script src="' + src + '"><\/script>' );
+	</script>
+
+	<!-- Test suite -->
+	<script src="TreeWalker.test.js"></script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

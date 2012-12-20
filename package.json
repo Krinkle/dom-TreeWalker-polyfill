@@ -1,0 +1,41 @@
+{
+	"name": "dom-TreeWalker-polyfill",
+	"version": "0.1.0",
+	"description": "JavaScript implementation of W3 DOM4 TreeWalker interface.",
+	"keywords": [
+		"dom",
+		"domcore",
+		"createTreeWalker",
+		"TreeWalker",
+		"html5",
+		"polyfill"
+	],
+	"homepage": "https://github.com/Krinkle/dom-TreeWalker-polyfill",
+	"bugs": "https://github.com/Krinkle/dom-TreeWalker-polyfill/issues",
+	"author": {
+		"name": "Timo Tijhof",
+		"web": "https://github.com/Krinkle"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Krinkle/dom-TreeWalker-polyfillb.git"
+	},
+	"scripts": {
+			"test": "grunt test"
+	},
+	"dependencies": {
+	},
+	"devDependencies": {
+		"grunt-compare-size": "~0.3.0",
+		"grunt-contrib-jshint": "~0.1.0",
+		"grunt-contrib-qunit": "~0.1.0",
+		"grunt-contrib-watch": "~0.1.0",
+		"grunt-contrib-uglify": "~0.1.0",
+		"grunt": "~0.4.0rc4",
+		"grunt-cli": "~0.1.0"
+	},
+	"licenses": [{
+		"type": "MIT",
+		"url": "http://mit-license.org/"
+	}]
+}
