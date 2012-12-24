@@ -344,7 +344,7 @@
 					return node;
 				}
 			}
-			return null; // +
+			return null;
 		},
 
 		/**
@@ -419,8 +419,8 @@
 				} else {
 					return null;
 				}
-				// result = this.filter.acceptNode(node); // +
-				if (this.filter.acceptNode(node) === NodeFilter.FILTER_ACCEPT) {
+				result = this.filter.acceptNode(node);
+				if (result === NodeFilter.FILTER_ACCEPT) {
 					this.currentNode = node;
 					return node;
 				}
