@@ -404,9 +404,8 @@
 			node = this.currentNode;
 			result = NodeFilter.FILTER_ACCEPT;
 
-			children:
 			while (true) {
-				while (result !== NodeFilter.FILTER_ACCEPT && node.firstChild !== null) {
+				while (result !== NodeFilter.FILTER_REJECT && node.firstChild !== null) {
 					node = node.firstChild;
 					result = this.filter.acceptNode(node);
 					if (result === NodeFilter.FILTER_ACCEPT) {
@@ -418,13 +417,13 @@
 				if (following !== null) {
 					node = following;
 				} else {
-					continue children; // causes infinite loop
+					return null;
 				}
+				// result = this.filter.acceptNode(node); // +
 				if (this.filter.acceptNode(node) === NodeFilter.FILTER_ACCEPT) {
 					this.currentNode = node;
 					return node;
 				}
-				return null;
 			}
 		};
 
