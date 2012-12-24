@@ -348,58 +348,11 @@
 		},
 
 		/**
-		 * @based on WebKit's TreeWalker::nextNode
-		 * https://trac.webkit.org/browser/trunk/Source/WebCore/dom/TreeWalker.cpp?rev=137221#L253
-		 *
-		 * @method
-		 * @return {Node|null}
-		 */
-		nextNode: function () {
-			var node, result;
-			node = this.currentNode;
-
-			children:
-			while (true) {
-				while (node.firstChild !== null) {
-					node = node.firstChild;
-					result = this.filter.acceptNode(node);
-					if (result === NodeFilter.FILTER_ACCEPT) {
-						this.currentNode = node;
-						return node;
-					}
-					if (result === NodeFilter.FILTER_REJECT) {
-						break;
-					}
-				}
-				
-				while ((node = nextSkippingChildren(node, this.root)) !== null) {
-					result = this.filter.acceptNode(node);
-					if (result === NodeFilter.FILTER_ACCEPT) {
-						this.currentNode = node;
-						return node;
-					}
-					if (result === NodeFilter.FILTER_SKIP) {
-						continue children;
-					}
-				}
-				break;
-			}
-
-			return null;
-		}
-	};
-
-	if (false) {
-
-		/**
-		 * FIXME: The specification appears to be broken.
-		 * (Run tests to find out)
-		 *
 		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-nextnode
 		 * @method
 		 * @return {Node|null}
 		 */
-		TreeWalker.prototype.nextNode = function () {
+		nextNode: function () {
 			var node, result, following;
 			node = this.currentNode;
 			result = NodeFilter.FILTER_ACCEPT;
@@ -425,6 +378,50 @@
 					return node;
 				}
 			}
+		}
+	};
+
+	if (false) {
+
+		/**
+		 * @based on WebKit's TreeWalker::nextNode
+		 * https://trac.webkit.org/browser/trunk/Source/WebCore/dom/TreeWalker.cpp?rev=137221#L253
+		 *
+		 * @method
+		 * @return {Node|null}
+		 */
+		TreeWalker.prototype.nextNode = function () {
+			var node, result;
+			node = this.currentNode;
+
+			children:
+			while (true) {
+				while (node.firstChild !== null) {
+					node = node.firstChild;
+					result = this.filter.acceptNode(node);
+					if (result === NodeFilter.FILTER_ACCEPT) {
+						this.currentNode = node;
+						return node;
+					}
+					if (result === NodeFilter.FILTER_REJECT) {
+						break;
+					}
+				}
+
+				while ((node = nextSkippingChildren(node, this.root)) !== null) {
+					result = this.filter.acceptNode(node);
+					if (result === NodeFilter.FILTER_ACCEPT) {
+						this.currentNode = node;
+						return node;
+					}
+					if (result === NodeFilter.FILTER_SKIP) {
+						continue children;
+					}
+				}
+				break;
+			}
+
+			return null;
 		};
 
 	}
