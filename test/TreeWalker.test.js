@@ -7,8 +7,8 @@
  * @param message
  */
 QUnit.assert.isNodeFilter = function (actual, message) {
-	if (actual.constructor === NodeFilter) {
-		return QUnit.push(actual.constructor === NodeFilter, actual, NodeFilter, message);
+	if (!actual || actual.constructor === NodeFilter) {
+		return QUnit.push(actual && actual.constructor === NodeFilter, actual, NodeFilter, message);
 	}
 	return QUnit.push(actual.FILTER_ACCEPT === 1, actual.FILTER_ACCEPT, 1, message + ' (duck-typing)');
 };
