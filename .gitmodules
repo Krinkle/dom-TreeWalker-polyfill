@@ -1,6 +1,0 @@
-[submodule "libs/qunit"]
-	path = libs/qunit
-	url = git://github.com/jquery/qunit.git
-[submodule "libs/qunit-logging"]
-	path = libs/qunit-logging
-	url = git://github.com/Krinkle/qunit-logging

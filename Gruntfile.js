@@ -1,20 +1,24 @@
 /*jshint node:true */
 module.exports = function (grunt) {
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-qunit');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-jscs-checker');
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		jshint: {
 			options: {
-				jshintrc: '.jshintrc'
+				jshintrc: true
 			},
-			all: ['Gruntfile.js', '{src,test}/**/*.js']
+			all: ['*.js', '{src,test}/**/*.js']
+		},
+		jscs: {
+			all: '<%= jshint.all %>'
 		},
 		qunit: {
-			all: ['test/**/*.html']
-		},
-		watch: {
-			files: ['.jshintrc', '{src,test}/**/*'],
-			tasks: 'test'
+			all: 'test/**/*.html'
 		},
 		uglify: {
 			all: {
@@ -22,22 +26,19 @@ module.exports = function (grunt) {
 					'dist/TreeWalker-polyfill.min.js': ['src/TreeWalker-polyfill.js']
 				},
 				options: {
-					banner: '/*! TreeWalker v<%= pkg.version %> | github.com/Krinkle */\n'
+					banner: '/*! TreeWalker v<%= pkg.version %> | krinkle.mit-license.org */\n'
 				}
 			}
 		},
-		'compare_size': {
-			files: ['src/TreeWalker-polyfill.js', 'dist/TreeWalker-polyfill.min.js']
+		watch: {
+			files: [
+				'.{jscsrc,jshintignore,jshintrc}',
+				'<%= jshint.all %>'
+			],
+			tasks: 'test'
 		}
 	});
 
-	// Load grunt tasks
-	grunt.loadNpmTasks('grunt-compare-size');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-qunit');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-
-	grunt.registerTask('test', ['jshint', 'qunit', 'uglify']);
-	grunt.registerTask('default', ['test', 'compare_size']);
+	grunt.registerTask('test', ['jshint', 'jscs', 'qunit', 'uglify']);
+	grunt.registerTask('default', 'test');
 };
