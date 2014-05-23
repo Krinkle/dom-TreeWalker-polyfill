@@ -1,6 +1,6 @@
-[![Build Status](https://secure.travis-ci.org/Krinkle/dom-TreeWalker-polyfill.png)](http://travis-ci.org/Krinkle/dom-TreeWalker-polyfill)
+[![Build Status](https://travis-ci.org/Krinkle/dom-TreeWalker-polyfill.svg?branch=master)](https://travis-ci.org/Krinkle/dom-TreeWalker-polyfill)
 
-# DOM TreeWalker polyfill
+# DOM TreeWalker polyfill 
 
 JavaScript implementation of W3 DOM4 TreeWalker interface for browsers supporting ECMAScript 3 or higher.
 
