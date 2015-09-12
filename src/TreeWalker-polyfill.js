@@ -406,4 +406,8 @@
 		win.NodeFilter = NodeFilter.constructor = NodeFilter.prototype = NodeFilter;
 	}
 
+	if (!win.TreeWalker) {
+		win.TreeWalker = TreeWalker;
+	}
+
 }(window, document));

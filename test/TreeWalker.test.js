@@ -84,7 +84,9 @@ QUnit.module('TreeWalker', {
 	}
 });
 
-QUnit.test('constructor()', 1, function (assert) {
+QUnit.test('constructor()', 2, function (assert) {
+	assert.equal(typeof window.TreeWalker, 'function', 'exposed on Window');
+
 	assert.throws(function () {
 		return document.createTreeWalker();
 	}, 'Invalid arguments');
