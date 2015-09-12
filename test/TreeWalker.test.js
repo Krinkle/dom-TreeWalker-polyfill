@@ -2,9 +2,10 @@
 
 /**
  * Should be able to simply use `assert.strictEqual(tw.filter.constructor, NodeFilter)`
- * but for some reason this causes bugs in PhantomJS (http://code.google.com/p/phantomjs/issues/detail?id=935)
- * @param {mixed} actual
- * @param message
+ * but for some reason this causes bugs in PhantomJS (https://code.google.com/p/phantomjs/issues/detail?id=935)
+ *
+ * @param {Mixed} actual
+ * @param {string} message
  */
 QUnit.assert.isNodeFilter = function (actual, message) {
 	if (!actual || actual.constructor === NodeFilter) {

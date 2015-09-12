@@ -2,8 +2,7 @@
  * JavaScript implementation of W3 DOM4 TreeWalker interface.
  *
  * See also:
- * - http://www.w3.org/TR/dom/#interface-treewalker
- * - http://www.w3.org/TR/dom/#dom-document-createtreewalker
+ * - https://dom.spec.whatwg.org/#interface-treewalker
  *
  * Attributes like "read-only" and "private" are ignored in this implementation
  * due to ECMAScript 3 (as opposed to ES5) not supporting creation of such properties.
@@ -18,8 +17,7 @@
 		return;
 	}
 
-	/* Cross-browser polyfill for these constants */
-
+	// Cross-browser polyfill for these constants
 	NodeFilter = {
 		// Constants for acceptNode()
 		FILTER_ACCEPT: 1,
@@ -41,26 +39,6 @@
 		SHOW_DOCUMENT_FRAGMENT: 0x400,
 		SHOW_NOTATION: 0x800 // historical
 	};
-
-	win.NodeFilter = win.NodeFilter || (NodeFilter.constructor = NodeFilter.prototype = NodeFilter);
-
-	/*
-	// FYI only, not used
-	Node = {
-		ELEMENT_NODE: 1,
-		ATTRIBUTE_NODE: 2, // historical
-		TEXT_NODE: 3,
-		CDATA_SECTION_NODE: 4, // historical
-		ENTITY_REFERENCE_NODE: 5, // historical
-		ENTITY_NODE: 6, // historical
-		PROCESSING_INSTRUCTION_NODE: 7,
-		COMMENT_NODE: 8,
-		DOCUMENT_NODE: 9,
-		DOCUMENT_TYPE_NODE: 10,
-		DOCUMENT_FRAGMENT_NODE: 11,
-		NOTATION_NODE: 12 // historical
-	};
-	*/
 
 	/* Local utilities */
 
@@ -91,16 +69,17 @@
 	/* Private methods and helpers */
 
 	/**
-	 * @spec http://www.w3.org/TR/dom/#concept-traverse-children
+	 * See https://dom.spec.whatwg.org/#concept-traverse-children
+	 *
+	 * @private
 	 * @method
-	 * @access private
 	 * @param {TreeWalker} tw
 	 * @param {string} type One of 'first' or 'last'.
 	 * @return {Node|null}
 	 */
 	traverseChildren = function (tw, type) {
 		var child, node, parent, result, sibling;
-		node = tw.currentNode[mapChild[type]];
+		node = tw.currentNode[ mapChild[ type ] ];
 		while (node !== null) {
 			result = tw.filter.acceptNode(node);
 			if (result === NodeFilter.FILTER_ACCEPT) {
@@ -108,14 +87,14 @@
 				return node;
 			}
 			if (result === NodeFilter.FILTER_SKIP) {
-				child = node[mapChild[type]];
+				child = node[ mapChild[ type ] ];
 				if (child !== null) {
 					node = child;
 					continue;
 				}
 			}
 			while (node !== null) {
-				sibling = node[mapChild[type]];
+				sibling = node[ mapChild[ type ] ];
 				if (sibling !== null) {
 					node = sibling;
 					break;
@@ -132,12 +111,13 @@
 	};
 
 	/**
-	 * @spec http://www.w3.org/TR/dom/#concept-traverse-siblings
+	 * See https://dom.spec.whatwg.org/#concept-traverse-siblings
+	 *
+	 * @private
 	 * @method
-	 * @access private
 	 * @param {TreeWalker} tw
 	 * @param {TreeWalker} type One of 'next' or 'previous'.
-	 * @return {Node|nul}
+	 * @return {Node|null}
 	 */
 	traverseSiblings = function (tw, type) {
 		var node, result, sibling;
@@ -146,7 +126,7 @@
 			return null;
 		}
 		while (true) {
-			sibling = node[mapSibling[type]];
+			sibling = node[ mapSibling[ type ] ];
 			while (sibling !== null) {
 				node = sibling;
 				result = tw.filter.acceptNode(node);
@@ -154,9 +134,9 @@
 					tw.currentNode = node;
 					return node;
 				}
-				sibling = node[mapChild[type]];
+				sibling = node[ mapChild[ type ] ];
 				if (result === NodeFilter.FILTER_REJECT) {
-					sibling = node[mapSibling[type]];
+					sibling = node[ mapSibling[ type ] ];
 				}
 			}
 			node = node.parentNode;
@@ -170,7 +150,7 @@
 	};
 
 	/**
-	 * @based on WebKit's NodeTraversal::nextSkippingChildren
+	 * Based on WebKit's NodeTraversal::nextSkippingChildren
 	 * https://trac.webkit.org/browser/trunk/Source/WebCore/dom/NodeTraversal.h?rev=137221#L103
 	 */
 	nextSkippingChildren = function (node, stayWithin) {
@@ -182,7 +162,7 @@
 		}
 
 		/**
-		 * @based on WebKit's NodeTraversal::nextAncestorSibling
+		 * Based on WebKit's NodeTraversal::nextAncestorSibling
 		 * https://trac.webkit.org/browser/trunk/Source/WebCore/dom/NodeTraversal.cpp?rev=137221#L43
 		 */
 		while (node.parentNode !== null) {
@@ -197,16 +177,13 @@
 		return null;
 	};
 
-	/* Public API */
-
 	/**
-	 * Implemented version: http://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal.html#Traversal-TreeWalker
-	 * Latest version: http://www.w3.org/TR/dom/#interface-treewalker
+	 * See https://dom.spec.whatwg.org/#interface-treewalker
 	 *
 	 * @constructor
 	 * @param {Node} root
-	 * @param {number} whatToShow [optional]
-	 * @param {Function} filter [optional]
+	 * @param {number} [whatToShow]
+	 * @param {Function} [filter]
 	 * @throws Error
 	 */
 	TreeWalker = function (root, whatToShow, filter) {
@@ -230,7 +207,7 @@
 		/**
 		 * @method
 		 * @param {Node} node
-		 * @return {Number} Constant NodeFilter.FILTER_ACCEPT,
+		 * @return {number} Constant NodeFilter.FILTER_ACCEPT,
 		 *  NodeFilter.FILTER_REJECT or NodeFilter.FILTER_SKIP.
 		 */
 		tw.filter.acceptNode = function (node) {
@@ -261,7 +238,8 @@
 		constructor: TreeWalker,
 
 		/**
-		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-parentnode
+		 * See https://dom.spec.whatwg.org/#ddom-treewalker-parentnode
+		 *
 		 * @method
 		 * @return {Node|null}
 		 */
@@ -278,7 +256,8 @@
 		},
 
 		/**
-		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-firstchild
+		 * See https://dom.spec.whatwg.org/#dom-treewalker-firstchild
+		 *
 		 * @method
 		 * @return {Node|null}
 		 */
@@ -287,7 +266,8 @@
 		},
 
 		/**
-		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-lastchild
+		 * See https://dom.spec.whatwg.org/#dom-treewalker-lastchild
+		 *
 		 * @method
 		 * @return {Node|null}
 		 */
@@ -296,7 +276,8 @@
 		},
 
 		/**
-		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-previoussibling
+		 * See https://dom.spec.whatwg.org/#dom-treewalker-previoussibling
+		 *
 		 * @method
 		 * @return {Node|null}
 		 */
@@ -305,7 +286,8 @@
 		},
 
 		/**
-		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-nextsibling
+		 * See https://dom.spec.whatwg.org/#dom-treewalker-nextsibling
+		 *
 		 * @method
 		 * @return {Node|null}
 		 */
@@ -314,7 +296,8 @@
 		},
 
 		/**
-		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-previousnode
+		 * See https://dom.spec.whatwg.org/#dom-treewalker-previousnode
+		 *
 		 * @method
 		 * @return {Node|null}
 		 */
@@ -348,7 +331,8 @@
 		},
 
 		/**
-		 * @spec http://www.w3.org/TR/dom/#dom-treewalker-nextnode
+		 * See https://dom.spec.whatwg.org/#dom-treewalker-nextnode
+		 *
 		 * @method
 		 * @return {Node|null}
 		 */
@@ -382,7 +366,8 @@
 	};
 
 	/**
-	 * @spec http://www.w3.org/TR/dom/#dom-document-createtreewalker
+	 * See http://www.w3.org/TR/dom/#dom-document-createtreewalker
+	 *
 	 * @param {Node} root
 	 * @param {number} [whatToShow=NodeFilter.SHOW_ALL]
 	 * @param {Function|Object} [filter=null]
@@ -401,5 +386,9 @@
 
 		return new TreeWalker(root, whatToShow, filter);
 	};
+
+	if (!win.NodeFilter) {
+		win.NodeFilter = NodeFilter.constructor = NodeFilter.prototype = NodeFilter;
+	}
 
 }(window, document));
