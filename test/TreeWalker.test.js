@@ -95,7 +95,7 @@ QUnit.test('constructor( Node )', 4, function (assert) {
 	tw = document.createTreeWalker(document.body);
 	assert.equal(tw.root, document.body, 'root set');
 	assert.equal(tw.whatToShow, 0xFFFFFFFF, 'whatToShow default');
-	assert.isNodeFilter(tw.filter, 'filter set');
+	assert.equal(tw.filter, null, 'no filter');
 	assert.equal(tw.currentNode, document.body, 'currentNode set');
 
 });
@@ -105,7 +105,7 @@ QUnit.test('constructor( Node, NodeFilter )', 4, function (assert) {
 	tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 	assert.equal(tw.root, document.body, 'root set');
 	assert.equal(tw.whatToShow, NodeFilter.SHOW_TEXT, 'whatToShow set');
-	assert.isNodeFilter(tw.filter, 'filter set');
+	assert.equal(tw.filter, null, 'no filter');
 	assert.equal(tw.currentNode, document.body, 'currentNode set');
 
 });
@@ -115,7 +115,7 @@ QUnit.test('constructor( Node, NodeFilter, null )', 4, function (assert) {
 	tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
 	assert.equal(tw.root, document.body, 'root set');
 	assert.equal(tw.whatToShow, NodeFilter.SHOW_TEXT, 'whatToShow set');
-	assert.isNodeFilter(tw.filter, 'filter set');
+	assert.equal(tw.filter, null, 'no filter');
 	assert.equal(tw.currentNode, document.body, 'currentNode set');
 });
 

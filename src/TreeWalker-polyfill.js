@@ -11,7 +11,7 @@
  */
 (function (win, doc) {
 	var TreeWalker, NodeFilter, create, toString, is, mapChild, mapSibling,
-		traverseChildren, traverseSiblings, nextSkippingChildren;
+		nodeFilter, traverseChildren, traverseSiblings, nextSkippingChildren;
 
 	if (doc.createTreeWalker) {
 		return;
@@ -69,6 +69,27 @@
 	/* Private methods and helpers */
 
 	/**
+	 * See https://dom.spec.whatwg.org/#concept-node-filter
+	 *
+	 * @private
+	 * @method
+	 * @param {TreeWalker} tw
+	 * @param {Node} node
+	 */
+	nodeFilter = function (tw, node) {
+		// Maps nodeType to whatToShow
+		if (!(((1 << (node.nodeType - 1)) & tw.whatToShow))) {
+			return NodeFilter.FILTER_SKIP;
+		}
+
+		if (tw.filter === null) {
+			return NodeFilter.FILTER_ACCEPT;
+		}
+
+		return tw.filter.acceptNode(node);
+	};
+
+	/**
 	 * See https://dom.spec.whatwg.org/#concept-traverse-children
 	 *
 	 * @private
@@ -81,7 +102,7 @@
 		var child, node, parent, result, sibling;
 		node = tw.currentNode[ mapChild[ type ] ];
 		while (node !== null) {
-			result = tw.filter.acceptNode(node);
+			result = nodeFilter(tw, node);
 			if (result === NodeFilter.FILTER_ACCEPT) {
 				tw.currentNode = node;
 				return node;
@@ -129,7 +150,7 @@
 			sibling = node[ mapSibling[ type ] ];
 			while (sibling !== null) {
 				node = sibling;
-				result = tw.filter.acceptNode(node);
+				result = nodeFilter(tw, node);
 				if (result === NodeFilter.FILTER_ACCEPT) {
 					tw.currentNode = node;
 					return node;
@@ -143,7 +164,7 @@
 			if (node === null || node === tw.root) {
 				return null;
 			}
-			if (tw.filter.acceptNode(node) === NodeFilter.FILTER_ACCEPT) {
+			if (nodeFilter(tw, node) === NodeFilter.FILTER_ACCEPT) {
 				return null;
 			}
 		}
@@ -199,38 +220,32 @@
 		tw.currentNode = root;
 
 		if (!is(filter, 'function')) {
-			filter = null;
+			tw.filter = null;
+		} else {
+			tw.filter = create(win.NodeFilter.prototype);
+
+			/**
+			 * See https://dom.spec.whatwg.org/#dom-nodefilter-acceptnode
+			 *
+			 * @method
+			 * @member NodeFilter
+			 * @param {Node} node
+			 * @return {number} Constant NodeFilter.FILTER_ACCEPT,
+			 *  NodeFilter.FILTER_REJECT or NodeFilter.FILTER_SKIP.
+			 */
+			tw.filter.acceptNode = function (node) {
+				var result;
+				if (active) {
+					throw new Error('DOMException: INVALID_STATE_ERR');
+				}
+
+				active = true;
+				result = filter(node);
+				active = false;
+
+				return result;
+			};
 		}
-
-		tw.filter = create(win.NodeFilter.prototype);
-
-		/**
-		 * @method
-		 * @param {Node} node
-		 * @return {number} Constant NodeFilter.FILTER_ACCEPT,
-		 *  NodeFilter.FILTER_REJECT or NodeFilter.FILTER_SKIP.
-		 */
-		tw.filter.acceptNode = function (node) {
-			var result;
-			if (active) {
-				throw new Error('DOMException: INVALID_STATE_ERR');
-			}
-
-			// Maps nodeType to whatToShow
-			if (!(((1 << (node.nodeType - 1)) & tw.whatToShow))) {
-				return NodeFilter.FILTER_SKIP;
-			}
-
-			if (filter === null) {
-				return NodeFilter.FILTER_ACCEPT;
-			}
-
-			active = true;
-			result = filter(node);
-			active = false;
-
-			return result;
-		};
 	};
 
 	TreeWalker.prototype = {
@@ -247,7 +262,7 @@
 			var node = this.currentNode;
 			while (node !== null && node !== this.root) {
 				node = node.parentNode;
-				if (node !== null && this.filter.acceptNode(node) === NodeFilter.FILTER_ACCEPT) {
+				if (node !== null && nodeFilter(this, node) === NodeFilter.FILTER_ACCEPT) {
 					this.currentNode = node;
 					return node;
 				}
@@ -308,10 +323,10 @@
 				sibling = node.previousSibling;
 				while (sibling !== null) {
 					node = sibling;
-					result = this.filter.acceptNode(node);
+					result = nodeFilter(this, node);
 					while (result !== NodeFilter.FILTER_REJECT && node.lastChild !== null) {
 						node = node.lastChild;
-						result = this.filter.acceptNode(node);
+						result = nodeFilter(this, node);
 					}
 					if (result === NodeFilter.FILTER_ACCEPT) {
 						this.currentNode = node;
@@ -322,7 +337,7 @@
 					return null;
 				}
 				node = node.parentNode;
-				if (this.filter.acceptNode(node) === NodeFilter.FILTER_ACCEPT) {
+				if (nodeFilter(this, node) === NodeFilter.FILTER_ACCEPT) {
 					this.currentNode = node;
 					return node;
 				}
@@ -344,7 +359,7 @@
 			while (true) {
 				while (result !== NodeFilter.FILTER_REJECT && node.firstChild !== null) {
 					node = node.firstChild;
-					result = this.filter.acceptNode(node);
+					result = nodeFilter(this, node);
 					if (result === NodeFilter.FILTER_ACCEPT) {
 						this.currentNode = node;
 						return node;
@@ -356,7 +371,7 @@
 				} else {
 					return null;
 				}
-				result = this.filter.acceptNode(node);
+				result = nodeFilter(this, node);
 				if (result === NodeFilter.FILTER_ACCEPT) {
 					this.currentNode = node;
 					return node;
