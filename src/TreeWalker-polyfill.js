@@ -222,7 +222,7 @@
 		if (!is(filter, 'function')) {
 			tw.filter = null;
 		} else {
-			tw.filter = create(win.NodeFilter.prototype);
+			tw.filter = create(win.NodeFilter);
 
 			/**
 			 * See https://dom.spec.whatwg.org/#dom-nodefilter-acceptnode

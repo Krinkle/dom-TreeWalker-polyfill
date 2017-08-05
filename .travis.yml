@@ -1,4 +1,16 @@
 sudo: false
+dist: trusty
 language: node_js
+
 node_js:
-  - '0.10'
+  - '8'
+
+addons:
+  chrome: stable
+
+script:
+  - npm run ci
+
+after_success:
+  - npm install -g codecov@2.x
+  - codecov

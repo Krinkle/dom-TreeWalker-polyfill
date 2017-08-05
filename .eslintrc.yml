@@ -1,0 +1,6 @@
+extends: crockford
+env:
+  browser: true
+rules:
+  indent: [error, tab]
+  no-continue: 0

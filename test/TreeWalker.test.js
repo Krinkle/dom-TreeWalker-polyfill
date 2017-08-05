@@ -1,66 +1,16 @@
 /*global QUnit */
 
-/**
- * Should be able to simply use `assert.strictEqual(tw.filter.constructor, NodeFilter)`
- * but for some reason this causes bugs in PhantomJS (https://code.google.com/p/phantomjs/issues/detail?id=935)
- *
- * @param {Mixed} actual
- * @param {string} message
- */
-QUnit.assert.isNodeFilter = function (actual, message) {
-	if (!actual || actual.constructor === NodeFilter) {
-		return QUnit.push(actual && actual.constructor === NodeFilter, actual, NodeFilter, message);
-	}
-	return QUnit.push(actual.FILTER_ACCEPT === 1, actual.FILTER_ACCEPT, 1, message + ' (duck-typing)');
-};
-
-QUnit.assert.validNodeFilterConstants = function (actual, message) {
-	var actualMembers, expected, key;
-	expected = {
-		FILTER_ACCEPT: 1,
-		FILTER_REJECT: 2,
-		FILTER_SKIP: 3,
-
-		SHOW_ALL: 0xFFFFFFFF,
-		SHOW_ELEMENT: 0x1,
-		SHOW_ATTRIBUTE: 0x2,
-		SHOW_TEXT: 0x4,
-		SHOW_CDATA_SECTION: 0x8,
-		SHOW_ENTITY_REFERENCE: 0x10,
-		SHOW_ENTITY: 0x20,
-		SHOW_PROCESSING_INSTRUCTION: 0x40,
-		SHOW_COMMENT: 0x80,
-		SHOW_DOCUMENT: 0x100,
-		SHOW_DOCUMENT_TYPE: 0x200,
-		SHOW_DOCUMENT_FRAGMENT: 0x400,
-		SHOW_NOTATION: 0x800
-	};
-
-	actualMembers = {};
-	for (key in expected) {
-		if (expected.hasOwnProperty(key)) {
-			actualMembers[key] = actual[key];
-		}
-	}
-
-	QUnit.push(QUnit.equiv(actualMembers, expected), actualMembers, expected, message);
-};
-
 QUnit.module('NodeFilter');
 
-QUnit.test('constants', QUnit.urlParams.useNative ? 3 : 1, function (assert) {
+QUnit.test('constants', function (assert) {
 	var tw = document.createTreeWalker(document.body, 0xFFFFFFFF, function () {});
 
 	assert.isNodeFilter(tw.filter, 'filter property is instance of NodeFilter');
-
-	if (QUnit.urlParams.useNative) {
-		assert.validNodeFilterConstants(NodeFilter, 'Static members of native NodeFilter');
-		assert.validNodeFilterConstants(tw.filter, 'Members of filter object of TreeWalker object');
-	}
+	assert.validNodeFilterConstants(NodeFilter, 'Static members of native NodeFilter');
 });
 
 QUnit.module('TreeWalker', {
-	setup: function () {
+	beforeEach: function () {
 		var fixture = document.getElementById('qunit-fixture'),
 			div = document.createElement('div');
 
@@ -84,7 +34,7 @@ QUnit.module('TreeWalker', {
 	}
 });
 
-QUnit.test('constructor()', 2, function (assert) {
+QUnit.test('constructor()', function (assert) {
 	assert.equal(typeof window.TreeWalker, 'function', 'exposed on Window');
 
 	assert.throws(function () {
@@ -92,7 +42,7 @@ QUnit.test('constructor()', 2, function (assert) {
 	}, 'Invalid arguments');
 });
 
-QUnit.test('constructor( Node )', 4, function (assert) {
+QUnit.test('constructor( Node )', function (assert) {
 	var tw;
 	tw = document.createTreeWalker(document.body);
 	assert.equal(tw.root, document.body, 'root set');
@@ -102,7 +52,7 @@ QUnit.test('constructor( Node )', 4, function (assert) {
 
 });
 
-QUnit.test('constructor( Node, NodeFilter )', 4, function (assert) {
+QUnit.test('constructor( Node, NodeFilter )', function (assert) {
 	var tw;
 	tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 	assert.equal(tw.root, document.body, 'root set');
@@ -112,7 +62,7 @@ QUnit.test('constructor( Node, NodeFilter )', 4, function (assert) {
 
 });
 
-QUnit.test('constructor( Node, NodeFilter, null )', 4, function (assert) {
+QUnit.test('constructor( Node, NodeFilter, null )', function (assert) {
 	var tw;
 	tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
 	assert.equal(tw.root, document.body, 'root set');
@@ -121,7 +71,7 @@ QUnit.test('constructor( Node, NodeFilter, null )', 4, function (assert) {
 	assert.equal(tw.currentNode, document.body, 'currentNode set');
 });
 
-QUnit.test('constructor( Node, NodeFilter, Function )', 4, function (assert) {
+QUnit.test('constructor( Node, NodeFilter, Function )', function (assert) {
 	var tw;
 	tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, function () {});
 	assert.equal(tw.root, document.body, 'root set');
@@ -130,7 +80,7 @@ QUnit.test('constructor( Node, NodeFilter, Function )', 4, function (assert) {
 	assert.equal(tw.currentNode, document.body, 'currentNode set');
 });
 
-QUnit.test('constructor( Node, NodeFilter, Object )', 4, function (assert) {
+QUnit.test('constructor( Node, NodeFilter, Object )', function (assert) {
 	var tw;
 	tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: function () {} });
 	assert.equal(tw.root, document.body, 'root set');
@@ -139,7 +89,7 @@ QUnit.test('constructor( Node, NodeFilter, Object )', 4, function (assert) {
 	assert.equal(tw.currentNode, document.body, 'currentNode set');
 });
 
-QUnit.test('acceptNode: NodeFilter.SHOW_ALL', 1, function (assert) {
+QUnit.test('acceptNode: NodeFilter.SHOW_ALL', function (assert) {
 	var root, tw, expected, actual;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
@@ -162,7 +112,7 @@ QUnit.test('acceptNode: NodeFilter.SHOW_ALL', 1, function (assert) {
 	assert.deepEqual(actual, expected);
 });
 
-QUnit.test('acceptNode: NodeFilter.SHOW_ELEMENT', 1, function (assert) {
+QUnit.test('acceptNode: NodeFilter.SHOW_ELEMENT', function (assert) {
 	var root, tw, expected, actual;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
@@ -181,7 +131,7 @@ QUnit.test('acceptNode: NodeFilter.SHOW_ELEMENT', 1, function (assert) {
 	assert.deepEqual(actual, expected);
 });
 
-QUnit.test('acceptNode: NodeFilter.SHOW_TEXT', 1, function (assert) {
+QUnit.test('acceptNode: NodeFilter.SHOW_TEXT', function (assert) {
 	var root, tw, expected, actual;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -200,7 +150,7 @@ QUnit.test('acceptNode: NodeFilter.SHOW_TEXT', 1, function (assert) {
 	assert.deepEqual(actual, expected);
 });
 
-QUnit.test('acceptNode: NodeFilter.SHOW_ALL + Function', 1, function (assert) {
+QUnit.test('acceptNode: NodeFilter.SHOW_ALL + Function', function (assert) {
 	var root, tw, expected, actual;
 	root = this.getFixture(
 		'<div title="1." id="one">' +
@@ -235,7 +185,7 @@ QUnit.test('acceptNode: NodeFilter.SHOW_ALL + Function', 1, function (assert) {
 	assert.deepEqual(actual, expected);
 });
 
-QUnit.test('acceptNode: NodeFilter.SHOW_ELEMENT + Function + FILTER_REJECT', 1, function (assert) {
+QUnit.test('acceptNode: NodeFilter.SHOW_ELEMENT + Function + FILTER_REJECT', function (assert) {
 	var root, tw, expected, actual;
 	root = this.getFixture(
 		'<div title="1." id="one">' +
@@ -272,7 +222,7 @@ QUnit.test('acceptNode: NodeFilter.SHOW_ELEMENT + Function + FILTER_REJECT', 1, 
 	assert.deepEqual(actual, expected);
 });
 
-QUnit.test('acceptNode: NodeFilter.SHOW_TEXT + Function', 1, function (assert) {
+QUnit.test('acceptNode: NodeFilter.SHOW_TEXT + Function', function (assert) {
 	var root, tw, expected, actual;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
@@ -294,7 +244,7 @@ QUnit.test('acceptNode: NodeFilter.SHOW_TEXT + Function', 1, function (assert) {
 	assert.deepEqual(actual, expected);
 });
 
-QUnit.test('.parentNode()', 10, function (assert) {
+QUnit.test('.parentNode()', function (assert) {
 	var root, tw, ret, save;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
@@ -324,7 +274,7 @@ QUnit.test('.parentNode()', 10, function (assert) {
 	assert.equal(tw.currentNode, save, 'Pointer not moved');
 });
 
-QUnit.test('.firstChild()', 6, function (assert) {
+QUnit.test('.firstChild()', function (assert) {
 	var root, tw, ret, save;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
@@ -344,7 +294,7 @@ QUnit.test('.firstChild()', 6, function (assert) {
 
 });
 
-QUnit.test('.lastChild()', 8, function (assert) {
+QUnit.test('.lastChild()', function (assert) {
 	var root, tw, ret, save;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
@@ -367,7 +317,7 @@ QUnit.test('.lastChild()', 8, function (assert) {
 	assert.equal(tw.currentNode, save, 'Pointer not moved');
 });
 
-QUnit.test('.previousSibling()', 6, function (assert) {
+QUnit.test('.previousSibling()', function (assert) {
 	var root, tw, ret, save;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
@@ -391,7 +341,7 @@ QUnit.test('.previousSibling()', 6, function (assert) {
 	assert.equal(tw.currentNode, ret, 'Pointer moved');
 });
 
-QUnit.test('.nextSibling()', 6, function (assert) {
+QUnit.test('.nextSibling()', function (assert) {
 	var root, tw, ret, save;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
@@ -415,7 +365,7 @@ QUnit.test('.nextSibling()', 6, function (assert) {
 	assert.equal(tw.currentNode, ret, 'Pointer moved');
 });
 
-QUnit.test('.previousNode()', 6, function (assert) {
+QUnit.test('.previousNode()', function (assert) {
 	var root, tw, ret, save;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
@@ -437,7 +387,7 @@ QUnit.test('.previousNode()', 6, function (assert) {
 	assert.equal(tw.currentNode, ret, 'Pointer moved');
 });
 
-QUnit.test('.nextNode()', 6, function (assert) {
+QUnit.test('.nextNode()', function (assert) {
 	var root, tw, ret, save;
 	root = this.getFixture();
 	tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL);
