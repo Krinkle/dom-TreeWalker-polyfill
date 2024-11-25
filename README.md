@@ -18,7 +18,7 @@ JavaScript implementation of W3 DOM4 TreeWalker interface for browsers supportin
 * http://www.w3.org/TR/dom/#dom-document-createtreewalker
 * http://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal.html#NodeIteratorFactory-createTreeWalker
 
-During the development of this polyfill, I noticed a [https://www.w3.org/Bugs/Public/show_bug.cgi?id=20445 defect] in the WHATWG DOM specification ([patch 1](https://github.com/whatwg/dom/commit/ff9acf95c68efe5c6fbc718f814da31b4a891a6a), [patch 2](https://github.com/whatwg/dom/commit/4b60feb14bc91d1d0bcc463eb2b9488bf1071bad))). The finding is acknowledged at <https://dom.spec.whatwg.org/#acks>.
+During the development of this polyfill, I noticed a [defect](https://www.w3.org/Bugs/Public/show_bug.cgi?id=20445) in the WHATWG DOM specification ([patch 1](https://github.com/whatwg/dom/commit/ff9acf95c68efe5c6fbc718f814da31b4a891a6a), [patch 2](https://github.com/whatwg/dom/commit/4b60feb14bc91d1d0bcc463eb2b9488bf1071bad)). The finding is acknowledged at <https://dom.spec.whatwg.org/#acks>.
 
 ## Tests
 
